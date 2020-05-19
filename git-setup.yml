@@ -1,0 +1,9 @@
+---
+- hosts: appgroup
+  user: ec2-user
+  become: yes
+  become_method: sudo
+  tasks:
+  
+  - name: 1. Install git
+    yum:  name=git state=present

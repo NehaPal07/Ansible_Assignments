@@ -1,0 +1,18 @@
+---
+- hosts: web
+  user: ec2-user
+  become: yes
+  become_method: sudo
+  tasks:
+
+  - name: 1. Install httpd with the latest version
+    yum:  name=httpd state=present
+
+  - name: 2. Start httpd Service
+    service: name=httpd state=started enabled=yes
+
+  - name: 3. Download Source
+    unarchive:
+      src: https://static.javatpoint.com/src/projects/projectmyeclipse/TransportCompany.zip
+      dest: /var/www/html
+      remote_src: yes
