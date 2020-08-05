@@ -1,0 +1,88 @@
+- name: Common package
+  hosts: all
+  gather_facts: no
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+  roles:
+    - { role: python, tags: [ init, python, common, addusers] }
+...
+...
+------------------------------------------
+ansible-doc -t connection -l
+uname -a
+yum repolist
+yum install ansible
+sudo yum install ansible
+rpm -qa | grep ansible
+rpm -ql ansible-2.9.7-1.el7.noarch | more
+
+user needs to create on both Master and Client:
+sudo su
+useradd -d /home/ec2-user -m ec2-user
+passwd ec2-user
+passwd -x -1 ec2-user  --no expiry
+
+Master:
+su - ec2-user
+ssh-keygen -t rsa
+copy the key and paste it to the worker node.
+
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCXYB++2qBCQnFfjwXM4Wol+cNn3iTEkZ5jT+huJOf8kCpoGKGorNCPYRhcPnyL6/l1sA+M9krcCcv82Csq+hUCAOyvWXAbQWxJGuizNsN7jVyvywqplaoJQt1DjU/K6orKrBdLAECPRd7pOqm9LDIju1r4Nir/Zrmp5XtpzlUK1OEpOJOLc+ZnO5ZlI7Fe35lozPp4Un8K0SoWKgYhFu3XfC2GhynKwU+TSQ1i9JfGnnyFcDhvGJqpIZO7gD92M/bL+4+7Y/atiz0ilaYqrzds1M7shbi8CHAwC7fQyAMHjU7mAkOrAoe58KlxVBSxtw8zLJkZ1K1w3+DQuxggSkrR ec2-user@ip-172-31-25-26.us-east-2.compute.internal
+
+
+make an entry of worker node on cd /etc/hosts
+ip appserver
+
+ssh appserver
+
+Worker:
+su - ec2-user
+ls -la
+mkdir .ssh
+chmod 700 .ssh/
+chown ec2-user:ec2-user .ssh/
+cd .ssh/
+vi authorized_keys
+paste the key
+chown ec2-user:ec2-user authorized_keys
+chmod 600 authorized_keys
+-----------------------------------------
+
+ls -ld /etc/ansible
+sudo chown -R ec2-user:ec2-user /etc/ansible
+vi hosts -- make an entry of worker node
+
+172.31.19.193
+
+[appgroup]
+   
+172.31.25.1
+172.31.19.193
+
+------------ Ad hoc command-------------
+ansible-doc -l | more
+ansible-doc -l | wc -l
+ansible-doc -s yum
+ansible appgroup -m ping
+ansible all -m ping
+ansible appgroup -m shell -a "uname -a"
+ansible appgroup -m yum -a "name=httpd start=present"
+got error: you need to be a root to perform this
+SOL: node- vi /etc/sudors/
+           ec2-user ALL=NOPASSWD: ALL
+It will still not work, if you run above command.
+
+Final Sol: ansible appgroup -m yum -a "name=httpd start=present" -b
+Package will install on target but httpd its not started yet
+
+ansible appgroup -m service -a "name=httpd state=started" -b
+
+ansible appgroup -m yum -a "name=nmap state=present" -b
+
+ansible appgroup -m copy -a "src=/home/ec2-user/hello.txt dest=/home/ec2-user" -b
+
+https://github.com/satyensingh/ansible-assignments-scripts.git
+
+https://github.com/NehaPal07/Ansible_Assignments.git
+
+
